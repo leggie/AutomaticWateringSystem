@@ -39,12 +39,12 @@ void showWateringTime() {
     uint8_t button = lcd.button();
 
     if ( button == KEYPAD_UP )    {
-      iPlantNo = (iPlantNo < 4 ? iPlantNo + 1 : 1);
+      iPlantNo = (iPlantNo < NOOFPLANTS ? iPlantNo + 1 : 1);
       showWateringTimeofPlant(iPlantNo);  //below in this (LCDFunctions)
       timeRef = millis();
     }
     else if ( button == KEYPAD_DOWN )    {
-      iPlantNo = (iPlantNo > 1 ? iPlantNo - 1 : 4);
+      iPlantNo = (iPlantNo > 1 ? iPlantNo - 1 : NOOFPLANTS);
       showWateringTimeofPlant(iPlantNo);  //below in this (LCDFunctions)
       timeRef = millis();
     }

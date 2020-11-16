@@ -1,4 +1,4 @@
-//why is a class declarion in a .h file?  http://stackoverflow.com/questions/17799906/error-aggregate-first-one-has-incomplete-type-and-cannot-be-defined
+//why is a class declaration in a .h file?  http://stackoverflow.com/questions/17799906/error-aggregate-first-one-has-incomplete-type-and-cannot-be-defined
 #include "headers.h"
 class Plant {
   private:
@@ -113,12 +113,12 @@ class Plant {
     }
     
     void startWateringMe() {
-      digitalWrite(mydigitalPIN, ON);
+      expander.digitalWrite(mydigitalPIN, ON);
       beingWatered = true;
     }
     
     void stopWateringMe() {
-      digitalWrite(mydigitalPIN, OFF);
+      expander.digitalWrite(mydigitalPIN, OFF);
       beingWatered = false;
     }
     
@@ -127,7 +127,7 @@ class Plant {
     }
     
     bool validateMe(uint8_t PlantNo) {
-      uint8_t SetOfValidPins[4] = {WATER_PLANT_1_PIN , WATER_PLANT_2_PIN , WATER_PLANT_3_PIN , WATER_PLANT_4_PIN};
+      uint8_t SetOfValidPins[4] = {PLANT_1_PORT , PLANT_2_PORT , PLANT_3_PORT , PLANT_4_PORT};
       bool amIValid = true;
       if (plantNumber         != PlantNo)                   {Log.error(F("The plantNumber of Plant %d  is invalid. Its value is %d" CR),        PlantNo, plantNumber);         amIValid = false;} 
       if (dayOfWeekToWater    >  127)                       {Log.error(F("The dayOfWeekToWater of Plant %d  is invalid. Its value is %d" CR),   PlantNo, dayOfWeekToWater);    amIValid = false;}       
@@ -140,14 +140,14 @@ class Plant {
     }
 
     void setDefaults(uint8_t PlantNo) {
-      uint8_t SetOfValidPins[4] = {WATER_PLANT_1_PIN , WATER_PLANT_2_PIN , WATER_PLANT_3_PIN , WATER_PLANT_4_PIN};
+      uint8_t SetOfValidPins[8] = {PLANT_1_PORT , PLANT_2_PORT , PLANT_3_PORT , PLANT_4_PORT, PLANT_5_PORT , PLANT_6_PORT , PLANT_7_PORT , PLANT_8_PORT };
       plantNumber         = PlantNo;
       dayOfWeekToWater    = 0b01111111;
       wateringTimeHours   = 0;
       wateringTimeMinutes = 0;
       wateringTimeSeconds = 0;
       wateringQuantity    = 0;
-      mydigitalPIN      = SetOfValidPins[PlantNo-1];
+      mydigitalPIN        = SetOfValidPins[PlantNo-1];
       beingWatered        = false;  
     }
 };

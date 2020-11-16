@@ -9,19 +9,25 @@
 #include <ArduinoLog.h>
 #include <DS1307RTC.h>
 #include <TimeLib.h>
+#include <PCF8574.h>
 
 //Defines
-#define ON LOW                          //used during Active Low Trigger 0 to 1 in Plant.h
-#define OFF HIGH                        //used during Active Low Trigger 1 to 0 in Plant.h
-#define BUZZER_PIN 11                   // Output PWM pin for the buzzer
-#define WATER_PLANT_1_PIN 3             // output pin for the relay 1
-#define WATER_PLANT_2_PIN 2             // output pin for the relay 2
-#define WATER_PLANT_3_PIN 13            // output pin for the relay 3
-#define WATER_PLANT_4_PIN 12            // output pin for the relay 4
-#define TIME_OUT 5                      // One of the system's FSM transitions
-#define WATERING_TIME_MET 6             // One of the system's FSM transitions
-#define SketchVersion "5.1"             // Version of the sketch.  To display in the LCD and Logger
-#define LOG_LEVEL LOG_LEVEL_NOTICE      // The Log level used in this compile.  set to one of the levels defined in ArduinoLog.h, and LoggerFunctions.  0 highest.  6 lowest
+#define ON LOW                     //used during Active Low Trigger 0 to 1 in Plant.h
+#define OFF HIGH                   //used during Active Low Trigger 1 to 0 in Plant.h
+#define BUZZER_PIN 11              // Output PWM pin for the buzzer
+#define NOOFPLANTS 8			   // Number of plants supported by sketch	
+#define PLANT_1_PORT 0             // output pin for the relay 1
+#define PLANT_2_PORT 1             // output pin for the relay 2
+#define PLANT_3_PORT 2             // output pin for the relay 3
+#define PLANT_4_PORT 3             // output pin for the relay 4
+#define PLANT_5_PORT 4             // output pin for the relay 5
+#define PLANT_6_PORT 5             // output pin for the relay 6
+#define PLANT_7_PORT 6             // output pin for the relay 7
+#define PLANT_8_PORT 7             // output pin for the relay 8
+#define TIME_OUT 5                 // One of the system's FSM transitions
+#define WATERING_TIME_MET 6        // One of the system's FSM transitions
+#define SketchVersion "5.1"        // Version of the sketch.  To display in the LCD and Logger
+#define LOG_LEVEL LOG_LEVEL_NOTICE // The Log level used in this compile.  set to one of the levels defined in ArduinoLog.h, and LoggerFunctions.  0 highest.  6 lowest
 
 // The different states of the system
 enum mcstates {
@@ -48,6 +54,9 @@ enum mcstates {
 // Creates an LCDKeypad instance
 // It handles the LCD screen and buttons on the shield
 LCDKeypad lcd;
+
+/** PCF8574 instance */
+PCF8574 expander;
 
 mcstates state; // Holds the current state of the system
 int8_t button;  // Holds the current button pressed

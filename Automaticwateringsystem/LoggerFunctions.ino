@@ -54,7 +54,7 @@ void plantDetailsonLogger(uint8_t initialspace) {
   }
   //print header
   Log.notice(F("No|    Weekday     | H  | M  | S  | Q  | P  |" CR));
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < NOOFPLANTS; i++) {
     sHours[0] = '\0';
     sMinutes[0] = '\0';
     sSeconds[0] = '\0';

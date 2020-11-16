@@ -24,7 +24,7 @@
    ToDo:
     Use the I2C EEPROM on the ZS-042 board using the below library
     DS3241_Simple Library, https://github.com/sleemanj/DS3231_Simple.  The parts of the libray to read temperature and use the 2K I2C EEPROM that is in the chip.
-    Change the LCD Librry to https://github.com/DFRobot/LCD-KeyPad-Shield, as the one used seems to be obsolete.  not available from https://forum.arduino.cc/index.php?topic=38061.0
+    Change the LCD Library to https://github.com/DFRobot/LCD-KeyPad-Shield, as the one used seems to be obsolete.  not available from https://forum.arduino.cc/index.php?topic=38061.0
 
    Last compiled
     ‎April ‎26, ‎2017, ‏‎11:57:22   // V1.0       
@@ -41,13 +41,15 @@
                                 // V4.2.1 Implementing the dayofweek state.  Removing the String object from code.  WIP
     Sep   16  2017  23:26:00    // V5.0   With Day of Week.  The day of week plants should be watered can be set.  Removed usage of String object to improve memory footprint
     Sep   29  2017  12:30:00    // V5.1   With Quantity in 0.1 second intervals. 
-    Nov   05  2017  11:21:00    // V5.1   Finally debugged. (Some (random) log statements restart sketch. Commented them out)  
+    Nov   05  2017  11:21:00    // V5.1   Finally debugged. (Some (random) log statements restart sketch. Commented them out) 
+    Jul   22  2018                        Start - use PCF8574 based port expander.  (Baord is actually the serial to LCD board - cheaper than port expader only board!)  
    
    Libraries used:
     Time Library:       https://www.pjrc.com/teensy/td_libs_Time.html
     DS1307RTC Library:  https://www.pjrc.com/teensy/td_libs_DS1307RTC.html
     LCDKeypad.h:        https://osepp.com/electronic-modules/shields/45-16-2-lcd-display-keypad-shield
     ArduinoLog          https://github.com/thijse/Arduino-Log
+    PCF8574             https://github.com/skywodd/pcf8574_arduino_library
 
    Authors:
     Jacob Oommen (leggie [dot] oommen [at] gmail [dot] com ), Reuben Jacob (Reubeojacob [at] outlook [dot] com)
@@ -59,18 +61,31 @@
     http://www.opensource.org/licenses/mit-license.php
 
 */
+//#include <PCint.h>
+#include <PCF8574.h>
+#include <DS1307RTC.h>
+#include <ArduinoLog.h>
+#include <TimeLib.h>
+#include <Time.h>
+#include <LiquidCrystal.h>
+#include <Wire.h>
+#include <LCDKeypad.h>
 #include "Plant.h"
 
 // create an array of plants.  holds all the values and functions for a plant
-Plant Plants[4];
+Plant Plants[NOOFPLANTS];
 
 void setup() {
   //setting the values of the digital pins to the 'off' position initially
-  pinMode(BUZZER_PIN, OUTPUT);        digitalWrite (BUZZER_PIN, ON);         // Pin for Buzzer pin
-  pinMode(WATER_PLANT_1_PIN, OUTPUT); digitalWrite (WATER_PLANT_1_PIN, OFF); // Pin for watering Plant 1
-  pinMode(WATER_PLANT_2_PIN, OUTPUT); digitalWrite (WATER_PLANT_2_PIN, OFF); // Pin for watering Plant 2
-  pinMode(WATER_PLANT_3_PIN, OUTPUT); digitalWrite (WATER_PLANT_3_PIN, OFF); // Pin for watering Plant 3
-  pinMode(WATER_PLANT_4_PIN, OUTPUT); digitalWrite (WATER_PLANT_4_PIN, OFF); // Pin for watering Plant 4
+  expander.pinMode(BUZZER_PIN, OUTPUT);           digitalWrite (BUZZER_PIN, ON);  // Pin for Buzzer pin
+  expander.pinMode(PLANT_1_PORT, OUTPUT); expander.digitalWrite(PLANT_1_PORT, OFF); // Pin for watering Plant 1
+  expander.pinMode(PLANT_2_PORT, OUTPUT); expander.digitalWrite(PLANT_2_PORT, OFF); // Pin for watering Plant 2
+  expander.pinMode(PLANT_3_PORT, OUTPUT); expander.digitalWrite(PLANT_3_PORT, OFF); // Pin for watering Plant 3
+  expander.pinMode(PLANT_4_PORT, OUTPUT); expander.digitalWrite(PLANT_4_PORT, OFF); // Pin for watering Plant 4
+  expander.pinMode(PLANT_5_PORT, OUTPUT); expander.digitalWrite(PLANT_5_PORT, OFF); // Pin for watering Plant 5
+  expander.pinMode(PLANT_6_PORT, OUTPUT); expander.digitalWrite(PLANT_6_PORT, OFF); // Pin for watering Plant 6
+  expander.pinMode(PLANT_7_PORT, OUTPUT); expander.digitalWrite(PLANT_7_PORT, OFF); // Pin for watering Plant 7
+  expander.pinMode(PLANT_8_PORT, OUTPUT); expander.digitalWrite(PLANT_8_PORT, OFF); // Pin for watering Plant 8
 
   // Set up serial port and wait until connected
   Serial.begin(115200);
@@ -103,7 +118,7 @@ void setup() {
     digitalClockDisplayonLogger();
     Log.notice(F("Loading values for Plants details.|" CR)); 
     //Update Plant number and Pin numbers to default values
-    for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t i = 0; i < NOOFPLANTS; i++)
       Plants[i].setDefaults(i + 1);
     //Set is watering active to false
     isWateringActive = false;
@@ -118,7 +133,7 @@ void setup() {
   if (isWateringActive) {
     state = SHOW_TIME_WATERING_ON;
     digitalClockDisplayonLogger();
-    Log.notice(F("Watering time met for plants | 1   | 2   | 3   | 4   |" CR));   //  set the title of the met watering times only once
+    Log.notice(F("Watering time met for plants | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   |" CR));   //  set the title of the met watering times only once
   }
   else
     state = SHOW_TIME;

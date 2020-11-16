@@ -132,7 +132,7 @@ void Statetransition(uint8_t trigger, bool buttonLongPress) {
 
     //State 9
     case SET_YEAR:
-      if ( trigger == KEYPAD_SELECT ) delay(150); //do nothing.  To take care of teh two KEYPAD_SELECT triggers
+      if ( trigger == KEYPAD_SELECT ) delay(150); //do nothing.  To take care of the two KEYPAD_SELECT triggers
       if ( trigger == KEYPAD_SELECT ) state = SET_MONTH;
       else if ( trigger == TIME_OUT ) {
         if (isWateringActive) state = SHOW_TIME_WATERING_ON;
@@ -178,7 +178,7 @@ void Statetransition(uint8_t trigger, bool buttonLongPress) {
 
     //State 14
     case SET_SECOND:
-      //this if is redundant.  remove
+      //this if is redundant (non reachable).  remove
       if ( trigger == KEYPAD_SELECT ) {
         if (isWateringActive) state = SHOW_TIME_WATERING_ON;
         else state = SHOW_TIME;

@@ -1,7 +1,7 @@
 //get the Plants stored in EEPROM
   bool getPlantsFromEEPROM() {
   eeAddress = 0;
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < NOOFPLANTS; i++) {
     EEPROM.get(eeAddress, Plants[i]);
     eeAddress += sizeof(Plants[i]);  //update eeAdress to take the next variable
   }
@@ -10,7 +10,7 @@
   //eeAddress += sizeof(isWateringActive);
  
   bool validatePlants = true;
-  for (uint8_t i = 0; i < 4; i++)
+  for (uint8_t i = 0; i < NOOFPLANTS; i++)
     validatePlants = validatePlants && Plants[i].validateMe(i+1);
   digitalClockDisplayonLogger();
   if (validatePlants) {
@@ -33,7 +33,7 @@ void storePlantinEEPROM() {
   eeAddress = 0;
   digitalClockDisplayonLogger();
   Log.notice(F("Storing details of plant to EEPROM. Current address is %d" CR),eeAddress);
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < NOOFPLANTS; i++) {
     EEPROM.put(eeAddress, Plants[i]);
     eeAddress += sizeof(Plants[i]);  //update eeAdress to take the next variable
     Log.trace(F("Stored details of plant %d" CR),i+1);

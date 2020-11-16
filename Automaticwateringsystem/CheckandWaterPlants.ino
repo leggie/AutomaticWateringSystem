@@ -3,7 +3,7 @@ bool checkWateringTime() {
   //set this to false inside the loop
   bool checkWT;
   checkWT = false;
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < NOOFPLANTS; i++) {
     if (Plants[i].isItMyWateringTime())
          Log.notice(F("YES | "));
     else Log.notice(F("NO  | "));
@@ -22,7 +22,7 @@ void waterPlants() {
   uint8_t largestwateringQuantity = 0;
   digitalClockDisplayonLogger(LOG_LEVEL_WARNING);
   Log.warning(F("Watering the Plant(s)"));
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < NOOFPLANTS; i++) {
     if (Plants[i].isItMyWateringTime()) {
       Log.warning(F(", %d "),(i + 1));
       Plants[i].startWateringMe();
@@ -30,13 +30,13 @@ void waterPlants() {
   }
    //find the largest watering quantity (getwateringQuantity()) at this point of time.  getwateringQuantity()
   largestwateringQuantity = 0;
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < NOOFPLANTS; i++) {
     if (Plants[i].amIbeingWatered())
       if (largestwateringQuantity < Plants[i].getwateringQuantity())
         largestwateringQuantity = Plants[i].getwateringQuantity();
   }
 
-  //Sketch Restarting if float parameter is used as soon as teh log is completed
+  //Sketch Restarting if float parameter is used as soon as the log is completed
   //Log.warning(F("| Watering is on for a maximum of %F  seconds. Starting the buzzer |" CR),float(largestwateringQuantity)/10);
   Log.warning(F("| Watering is on for a maximum of %d / 10 seconds. Starting the buzzer |" CR),largestwateringQuantity);
   //whether Serial.flush is used or not
@@ -45,7 +45,7 @@ void waterPlants() {
   analogWrite(BUZZER_PIN, 220);
   //loop for largestwateringQuantity seconds, incrementing the time by 1 second each time;
   /*
-  //To check if the behavoir of the log statement restarting the sketch is related to teh delay() statement.  It is not
+  //To check if the behavoir of the log statement restarting the sketch is related to the delay() statement.  It is not
   timeRef = millis();  //take a snapshot of the time
   while ( unsigned long lmiliseconds = (unsigned long)(millis() - timeRef) < (largestwateringQuantity*100+1)) {
     //Display time every second
@@ -53,7 +53,7 @@ void waterPlants() {
       digitalClockDisplayonLogger();
       Log.notice(F(CR));
      }
-    for (uint8_t i = 0; i < 4; i++) {
+    for (uint8_t i = 0; i < NOOFPLANTS; i++) {
       if (Plants[i].getwateringQuantity()*100 <= lmiliseconds && Plants[i].amIbeingWatered() ) {
         Plants[i].stopWateringMe();
         digitalClockDisplayonLogger(LOG_LEVEL_WARNING);
@@ -77,7 +77,7 @@ void waterPlants() {
       //Serial.flush();
       Log.notice(F("Elapsed time: %d  seconds / 10 |" CR),iseconds);
     }
-    for (uint8_t i = 0; i < 4; i++) {
+    for (uint8_t i = 0; i < NOOFPLANTS; i++) {
       if (Plants[i].getwateringQuantity() <= iseconds && Plants[i].amIbeingWatered() ) {
         Plants[i].stopWateringMe();
         digitalClockDisplayonLogger(LOG_LEVEL_WARNING);
